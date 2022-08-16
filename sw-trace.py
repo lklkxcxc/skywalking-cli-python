@@ -14,7 +14,7 @@ def interface_content_filter(trace_id):
     :param trace_id: 
     :return: 【1|0】
     '''
-    url = "http://127.0.0.1:5000/query"
+    url = "http://skywalking.cechealth.cn/query"
     params = {
         "trace_id": trace_id
     }
@@ -22,7 +22,7 @@ def interface_content_filter(trace_id):
     detail_trace_id_log = detail_trace_id_log.text
     print(detail_trace_id_log)
     print(type(detail_trace_id_log))
-    with open("blackname_keyword_list","r",encoding="utf-8") as f:
+    with open("blackname_keyword_list","r") as f:
         for line in f:
             print(line)
             result = re.search(line.strip(),detail_trace_id_log)
@@ -40,7 +40,7 @@ def interface_filter(endpointName):
     :return: 【1|0】
     """
     endpointName = re.sub("\(|\)",".",endpointName)
-    with open("blackname_list","r",encoding="utf-8") as f:
+    with open("blackname_list","r") as f:
         bn_list = f.read()
     match_result = re.search(endpointName.strip(),bn_list)
     if match_result == None:
@@ -82,7 +82,7 @@ def trace_erro_interface(start_time,end_time,sw_url,per_page_size,trace_detail_a
     i = 0
     # print(result.content)
     # print(time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(float("%s.%s" % (trace["start"][0:10],trace["start"][10:])))))
-    with open("mail.html","w",encoding="utf-8") as f:
+    with open("mail.html","w") as f:
         f.write('<head><meta charset="UTF-8"><title>Title</title><style>.t {border-right: 2px solid black;border-bottom: 2px solid black;}.t th,td {border-top: 2px solid black;border-left: 2px solid black;font-size: 10px;}</style></head><body><div style="color:red;font-size=15px;">最近15分钟统计：</div><table class="t" border="0" cellspacing="0" cellpadding="10px"><thead><tr style="background-color: deepskyblue"><th style="width: 100px;">时间</th><th>持续时长</th><th>接口名称</th><th>追踪ID</th></tr></thead><tbody>')
     for trace in result.json()["data"]["data"]["traces"]:
         # print(trace["endpointNames"])
@@ -109,9 +109,9 @@ def trace_erro_interface(start_time,end_time,sw_url,per_page_size,trace_detail_a
             print("哥们进入关键字黑名单了！", trace_id)
             continue
 
-        with open("mail.html","a",encoding="utf-8") as f:
+        with open("mail.html","a") as f:
             f.write('<tr><td>%s</td><td>%s</td><td>%s</td><td><a href="http://%s/query?trace_id=%s">%s</a></td></tr>' %(s_time,dur_time,endpointName,trace_detail_addr,trace_id,trace_id))
-    with open("mail.html","a",encoding="utf-8") as f:
+    with open("mail.html","a") as f:
         f.write('</tbody></table></body>')
 
 
@@ -126,7 +126,7 @@ def send_mail(receiver):
     send_addr = "sa@smtp.com"
 
     receiver = receiver
-    with open("mail.html","r",encoding="utf-8") as f:
+    with open("mail.html","r") as f:
         content = f.read()
     if re.search("<td>",content) == None:
         print("无报错接口！",content)
@@ -151,13 +151,13 @@ if __name__ == "__main__":
     end_time = time.strftime("%Y-%m-%d %H%M", time.localtime(end_time))
     print(start_time)
     print(end_time)
-    sw_url = "http://172.16.53.232:9412/graphql" # skywalking的前端服务的地址和端口
+    sw_url = "http://skywalking.cechealth.cn/graphql" # skywalking的前端服务的地址和端口
     per_page_size = 5000  #指定一次获取endpoint接口的数目
-    trace_detail_addr = "127.0.0.1:5000"  #指定查询指定trace_id详细日志
+    trace_detail_addr = "http://skywalking.cechealth.cn"  #指定查询指定trace_id详细日志
 
     receiver = "test@smtp.com"  #报警邮件接收人地址
 
     trace_erro_interface(start_time,end_time,sw_url,per_page_size,trace_detail_addr)
-    send_mail(receiver)
+    #send_mail(receiver)
     # interface_filter()
     # interface_content_filter("3c4212dd2dd548d394ba312c4619405d.104.16390380592724487")
