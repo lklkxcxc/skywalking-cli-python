@@ -7,7 +7,7 @@ import json
 import time
 import requests
 
-url = "http://skywalking.cechealth.cn/graphql"
+url = "http://skywalking.cn/graphql"
 end_time = time.time() + time.timezone
 start_time = end_time - 900
 start_time = time.strftime("%Y-%m-%d %H%M",time.localtime(start_time))
