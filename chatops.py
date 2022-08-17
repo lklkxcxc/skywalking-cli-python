@@ -7,7 +7,7 @@ from slack_sdk.errors import SlackApiError
 
 # WebClient instantiates a client that can call API methods
 # When using Bolt, you can use either `app.client` or the `client` passed to listeners.
-client = WebClient(token='xoxb-3836226053254-3945220451778-VtVFfKjM0eNmB1yJw1R0L08w')
+client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 logger = logging.getLogger(__name__)
 # ID of channel you want to post message to
 channel_id = "C03QSR196NN"
